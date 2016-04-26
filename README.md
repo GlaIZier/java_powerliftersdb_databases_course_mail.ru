@@ -1,2 +1,3 @@
-# java_powerliftersdb_databases_course_mail.ru
-Java db interface to connect to PostgreSql powerliftersdb
+# Java interface to powerliftersdb
+
+Java interface to [this](https://github.com/GlaIZier/sql_powerliftersdb_databases_course_mail.ru) database.

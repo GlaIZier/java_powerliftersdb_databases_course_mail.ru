@@ -1,0 +1,7 @@
+<Context>
+
+    <Environment name="db.url" value="${db.url}" type="java.lang.String"/>
+    <Environment name="db.username" value="${db.username}" type="java.lang.String"/>
+    <Environment name="db.password" value="${db.password}" type="java.lang.String"/>
+
+</Context>

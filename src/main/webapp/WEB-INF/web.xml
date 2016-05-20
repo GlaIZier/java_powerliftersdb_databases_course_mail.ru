@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>SimpleConnection</servlet-name>
-        <servlet-class>ru.glaizier.simple.SimpleConnectionServlet</servlet-class>
+        <servlet-class>ru.glaizier.servlets.SimpleConnectionServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

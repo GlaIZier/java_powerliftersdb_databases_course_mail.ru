@@ -104,15 +104,9 @@
     </build>
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.postgresql</groupId>-->
-            <!--<artifactId>postgresql</artifactId>-->
-            <!--<version>9.4.1208</version>-->
-        <!--</dependency>-->
-        <!--Remove this after tests-->
         <dependency>
             <groupId>org.postgresql</groupId>
-            <artifactId>pjdbc</artifactId>
+            <artifactId>postgresql</artifactId>
             <version>9.4.1208</version>
         </dependency>
 
@@ -121,6 +115,13 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Templater -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.23</version>
         </dependency>
 
         <!--Tests-->

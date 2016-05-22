@@ -7,9 +7,62 @@
     <description>Powerliftersdb api</description>
 
     <servlet>
+        <servlet-name>FreemarkerHtml</servlet-name>
+        <servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>
+        <init-param>
+            <param-name>TemplatePath</param-name>
+            <param-value>/views/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>NoCache</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ContentType</param-name>
+            <param-value>text/html; charset=UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>incompatible_improvements</param-name>
+            <param-value>2.3.22</param-value>
+        </init-param>
+        <init-param>
+            <param-name>template_exception_handler</param-name>
+            <param-value>rethrow</param-value>
+        </init-param>
+        <init-param>
+            <param-name>template_update_delay</param-name>
+            <param-value>5</param-value>
+        </init-param>
+        <init-param>
+            <param-name>default_encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>locale</param-name>
+            <param-value>ru_RU</param-value>
+        </init-param>
+        <init-param>
+            <param-name>number_format</param-name>
+            <param-value>0.##########</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SimpleConnection</servlet-name>
         <servlet-class>ru.glaizier.servlets.SimpleConnectionServlet</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FreemarkerHtml</servlet-name>
+        <url-pattern>*.ftl</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>SimpleConnection</servlet-name>
@@ -19,9 +72,9 @@
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
-    <error-page>
-        <location>/error.jsp</location>
-    </error-page>
+    <!--<error-page>-->
+        <!--<location>/error.jsp</location>-->
+    <!--</error-page>-->
 
     <session-config>
         <session-timeout>30</session-timeout>

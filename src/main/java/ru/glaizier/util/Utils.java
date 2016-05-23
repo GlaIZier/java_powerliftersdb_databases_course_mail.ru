@@ -3,9 +3,6 @@ package ru.glaizier.util;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Utils {
 
@@ -36,6 +33,14 @@ public class Utils {
 
     public static String getDbUrl() {
         return lookup("db.url");
+    }
+
+    public static String getDbServerName() {
+        return lookup("db.servername");
+    }
+
+    public static String getDbName() {
+        return lookup("db.name");
     }
 
     public static String getDbUserName() {

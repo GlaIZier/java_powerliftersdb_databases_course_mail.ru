@@ -1,4 +1,4 @@
-package ru.glaizier.simple.domain;
+package ru.glaizier.domain;
 
 import java.util.Date;
 

@@ -1,25 +1,30 @@
-package ru.glaizier.simple;
+package ru.glaizier.pool.postgres;
 
+import org.postgresql.ds.PGPoolingDataSource;
 import ru.glaizier.domain.BiggestExercise;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
-public class SimpleConnection {
+public class PostgresConnectionPool {
 
-    private Connection connection;
+    private DataSource dataSource;
 
-    public SimpleConnection(String dbUrl, String dbUserName, String dbPassword) {
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
+    public PostgresConnectionPool(String dbServerName, String dbName, String dbUserName, String dbPassword) {
+        PGPoolingDataSource dataSource = new PGPoolingDataSource();
+        dataSource.setDataSourceName("postgresConnectionPool");
+        dataSource.setServerName(dbServerName);
+        dataSource.setDatabaseName(dbName);
+        dataSource.setUser(dbUserName);
+        dataSource.setPassword(dbPassword);
+        dataSource.setInitialConnections(4);
+        dataSource.setMaxConnections(10);
+        this.dataSource = dataSource;
     }
 
-    public synchronized BiggestExercise getBiggestSquat() {
-        try (Statement statement = connection.createStatement();
+    public BiggestExercise getBiggestSquat() {
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(
                      "select last_name, first_name, sex, birthdate, result_kg as max_squat_result\n" +
                              "from exercise_result\n" +
@@ -52,14 +57,6 @@ public class SimpleConnection {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public void closeConnection() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }

@@ -1,7 +1,7 @@
 package ru.glaizier.servlets;
 
 import ru.glaizier.domain.BiggestExercise;
-import ru.glaizier.simple.SimpleConnection;
+import ru.glaizier.pool.postgres.PostgresConnectionPool;
 import ru.glaizier.util.Utils;
 
 import javax.servlet.ServletException;
@@ -12,21 +12,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleConnectionServlet extends HttpServlet {
+public class PostgresConnectionPoolServlet extends HttpServlet {
 
     public static final String CONTENT_TYPE = "text/html; charset=UTF-8";
     public static final String SIMPLE_TEMPLATE_NAME = "biggest_squat.ftl";
 
-    private SimpleConnection simpleConnection;
-
-    @Override
-    public void destroy() {
-        simpleConnection.closeConnection();
-    }
+    private PostgresConnectionPool postgresConnectionPool;
 
     @Override
     public void init() throws ServletException {
-        simpleConnection = new SimpleConnection(Utils.getDbUrl(), Utils.getDbUserName(), Utils.getDbPassword());
+        postgresConnectionPool = new PostgresConnectionPool(Utils.getDbServerName(), Utils.getDbName(),
+                Utils.getDbUserName(), Utils.getDbPassword());
     }
 
     @Override
@@ -34,7 +30,7 @@ public class SimpleConnectionServlet extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setContentType(CONTENT_TYPE);
 
-        BiggestExercise biggestSquat = simpleConnection.getBiggestSquat();
+        BiggestExercise biggestSquat = postgresConnectionPool.getBiggestSquat();
 
         Map<String, Object> params = new HashMap<>();
         if (biggestSquat != null) {
@@ -49,4 +45,5 @@ public class SimpleConnectionServlet extends HttpServlet {
         request.setAttribute("params", params);
         request.getRequestDispatcher(SIMPLE_TEMPLATE_NAME).forward(request, response);
     }
+
 }

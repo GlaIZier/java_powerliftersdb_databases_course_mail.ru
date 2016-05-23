@@ -17,12 +17,23 @@ public class SimpleConnectionServlet extends HttpServlet {
     public static final String CONTENT_TYPE = "text/html; charset=UTF-8";
     public static final String SIMPLE_TEMPLATE_NAME = "simple.ftl";
 
+    private SimpleConnection simpleConnection;
+
+    @Override
+    public void destroy() {
+        simpleConnection.closeConnection();
+    }
+
+    @Override
+    public void init() throws ServletException {
+        simpleConnection = new SimpleConnection(Utils.getDbUrl(), Utils.getDbUserName(), Utils.getDbPassword());
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("utf-8");
         response.setContentType(CONTENT_TYPE);
 
-        SimpleConnection simpleConnection = new SimpleConnection(Utils.getDbUrl(), Utils.getDbUserName(), Utils.getDbPassword());
         BiggestExercise biggestSquat = simpleConnection.getBiggestSquat();
 
         Map<String, Object> params = new HashMap<>();

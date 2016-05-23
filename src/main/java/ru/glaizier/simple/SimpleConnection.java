@@ -11,7 +11,6 @@ public class SimpleConnection {
     public SimpleConnection(String dbUrl, String dbUserName, String dbPassword) {
         try {
             Class.forName("org.postgresql.Driver");
-//            connection = DriverManager.getConnection(Utils.getDbUrl(), Utils.getDbUserName(), Utils.getDbPassword());
             connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
         } catch (Exception e) {
             e.printStackTrace();
@@ -19,14 +18,7 @@ public class SimpleConnection {
         }
     }
 
-    // TODO can i do such things?
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        connection.close();
-    }
-
-    public BiggestExercise getBiggestSquat() {
+    public synchronized BiggestExercise getBiggestSquat() {
         try (Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(
                      "select last_name, first_name, sex, birthdate, result_kg as max_squat_result\n" +
@@ -62,7 +54,12 @@ public class SimpleConnection {
         return null;
     }
 
-    public Connection getConnection() {
-        return connection;
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 }

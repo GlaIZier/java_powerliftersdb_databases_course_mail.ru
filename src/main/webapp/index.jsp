@@ -1,13 +1,21 @@
+<%@ page import="ru.glaizier.util.Utils" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%
+    if("logout".equals(request.getParameter("logout"))){
+        request.getSession().invalidate();
+        response.sendRedirect(request.getRequestURI());
+        return;
+    }
+%>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <h3>PowerliftersDb test interface to Db</h3>
-<p><a href="./simple">Simple connection</a></p>
-<p><a href="./ppool">PostgreSql Connection pool</a></p>
-<p><a href="./tpool">Tomcat Connection pool</a></p>
-<p><a href="./hibernate">Hibernate</a></p>
+<p><a href=".<%=Utils.getSimplePath()%>">Simple connection</a></p>
+<p><a href=".<%=Utils.getPpoolPath()%>">PostgreSql Connection pool</a></p>
+<p><a href=".<%=Utils.getTpoolPath()%>">Tomcat Connection pool</a></p>
+<p><a href=".<%=Utils.getHibernatePath()%>">Hibernate</a></p>
 </body>
 </html>

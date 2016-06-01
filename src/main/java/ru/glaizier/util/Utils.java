@@ -68,7 +68,7 @@ public class Utils {
         return (String) lookup("path.tpool");
     }
 
-    public static String getHibernate() {
+    public static String getHibernatePath() {
         return (String) lookup("path.hibernate");
     }
 

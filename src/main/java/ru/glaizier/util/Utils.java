@@ -3,6 +3,7 @@ package ru.glaizier.util;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 public class Utils {
 
@@ -22,9 +23,9 @@ public class Utils {
         return instance.context;
     }
 
-    private static String lookup(String envParam) {
+    private static Object lookup(String envParam) {
         try {
-            return (String) getContext().lookup(envParam);
+            return getContext().lookup(envParam);
         } catch (NamingException e) {
             e.printStackTrace();
             return null;
@@ -32,22 +33,26 @@ public class Utils {
     }
 
     public static String getDbUrl() {
-        return lookup("db.url");
+        return (String) lookup("db.url");
     }
 
     public static String getDbServerName() {
-        return lookup("db.servername");
+        return (String) lookup("db.servername");
     }
 
     public static String getDbName() {
-        return lookup("db.name");
+        return (String) lookup("db.name");
     }
 
     public static String getDbUserName() {
-        return lookup("db.username");
+        return (String) lookup("db.username");
     }
 
     public static String getDbPassword() {
-        return lookup("db.password");
+        return (String) lookup("db.password");
+    }
+
+    public static DataSource getDataSource() {
+        return (DataSource) lookup("jdbc/postgres");
     }
 }

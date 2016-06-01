@@ -1,5 +1,33 @@
 <Context>
 
+    <Resource name="jdbc/postgres"
+              driverClassName="org.postgresql.Driver"
+              url="${db.url}"
+              username="${db.username}"
+              password="${db.password}"
+              validationQuery="SELECT 1"
+              validationQueryTimeout="14"
+              logValidationErrors="true"
+              continueOnError="true"
+              ignoreExceptionOnPreload="true"
+              testOnConnect="true"
+              testOnBorrow="true"
+              testOnReturn="false"
+              testWhileIdle="true"
+              type="javax.sql.DataSource"
+              jdbcInterceptors="ConnectionState;StatementFinalizer;QueryTimeoutInterceptor(queryTimeout =14)"
+              logAbandoned="true"
+              removeAbandoned="true"
+              removeAbandonedTimeout="300"
+              maxAge="3600000"
+              maxWait="10000"
+              initialSize="4"
+              minIdle="4"
+              maxIdle="8"
+              maxActive="30"
+              jmxEnabled="true"
+              defaultAutoCommit="false"/>
+
     <Environment name="db.url" value="${db.url}" type="java.lang.String"/>
     <Environment name="db.servername" value="${db.servername}" type="java.lang.String"/>
     <Environment name="db.name" value="${db.name}" type="java.lang.String"/>

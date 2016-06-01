@@ -49,18 +49,8 @@
     </servlet>
 
     <servlet>
-        <servlet-name>SimpleConnection</servlet-name>
-        <servlet-class>ru.glaizier.servlets.SimpleConnectionServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>PostgresConnectionPoolServlet</servlet-name>
-        <servlet-class>ru.glaizier.servlets.PostgresConnectionPoolServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>TomcatConnectionPoolServlet</servlet-name>
-        <servlet-class>ru.glaizier.servlets.TomcatConnectionPoolServlet</servlet-class>
+        <servlet-name>BiggestSquatServlet</servlet-name>
+        <servlet-class>ru.glaizier.servlets.BiggestSquatServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -74,18 +64,18 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>SimpleConnection</servlet-name>
-        <url-pattern>/simple</url-pattern>
+        <servlet-name>BiggestSquatServlet</servlet-name>
+        <url-pattern>${path.simple}</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>PostgresConnectionPoolServlet</servlet-name>
-        <url-pattern>/ppool</url-pattern>
+        <servlet-name>BiggestSquatServlet</servlet-name>
+        <url-pattern>${path.ppool}</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>TomcatConnectionPoolServlet</servlet-name>
-        <url-pattern>/tpool</url-pattern>
+        <servlet-name>BiggestSquatServlet</servlet-name>
+        <url-pattern>${path.tpool}</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

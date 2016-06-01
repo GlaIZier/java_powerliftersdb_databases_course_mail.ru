@@ -32,6 +32,10 @@ public class Utils {
         }
     }
 
+    public static DataSource getDataSource() {
+        return (DataSource) lookup("jdbc/postgres");
+    }
+
     public static String getDbUrl() {
         return (String) lookup("db.url");
     }
@@ -52,7 +56,20 @@ public class Utils {
         return (String) lookup("db.password");
     }
 
-    public static DataSource getDataSource() {
-        return (DataSource) lookup("jdbc/postgres");
+    public static String getSimplePath() {
+        return (String) lookup("path.simple");
     }
+
+    public static String getPpoolPath() {
+        return (String) lookup("path.ppool");
+    }
+
+    public static String getTpoolPath() {
+        return (String) lookup("path.tpool");
+    }
+
+    public static String getHibernate() {
+        return (String) lookup("path.hibernate");
+    }
+
 }

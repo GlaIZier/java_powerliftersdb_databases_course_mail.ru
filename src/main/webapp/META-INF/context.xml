@@ -34,4 +34,9 @@
     <Environment name="db.username" value="${db.username}" type="java.lang.String"/>
     <Environment name="db.password" value="${db.password}" type="java.lang.String"/>
 
+    <Environment name="path.simple" value="${path.simple}" type="java.lang.String"/>
+    <Environment name="path.ppool" value="${path.ppool}" type="java.lang.String"/>
+    <Environment name="path.tpool" value="${path.tpool}" type="java.lang.String"/>
+    <Environment name="path.hibernate" value="${path.hibernate}" type="java.lang.String"/>
+
 </Context>

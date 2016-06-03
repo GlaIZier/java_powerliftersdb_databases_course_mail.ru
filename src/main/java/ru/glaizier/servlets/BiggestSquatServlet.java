@@ -1,5 +1,6 @@
 package ru.glaizier.servlets;
 
+import ru.glaizier.dao.BiggestSquatDao;
 import ru.glaizier.domain.BiggestExercise;
 import ru.glaizier.pool.postgres.PostgresConnectionPool;
 import ru.glaizier.pool.tomcat.TomcatConnectionPool;
@@ -22,9 +23,9 @@ public class BiggestSquatServlet extends HttpServlet {
     public static final String CONTENT_TYPE = "text/html; charset=UTF-8";
     public static final String SIMPLE_TEMPLATE_NAME = "biggest_squat.ftl";
 
-    private SimpleConnection simpleConnection;
-    private PostgresConnectionPool postgresConnectionPool;
-    private TomcatConnectionPool tomcatConnectionPool;
+    private BiggestSquatDao simpleConnection;
+    private BiggestSquatDao postgresConnectionPool;
+    private BiggestSquatDao tomcatConnectionPool;
 
     @Override
     public void init() throws ServletException {
@@ -32,11 +33,6 @@ public class BiggestSquatServlet extends HttpServlet {
         postgresConnectionPool = new PostgresConnectionPool(Utils.getDbServerName(), Utils.getDbName(),
                 Utils.getDbUserName(), Utils.getDbPassword());
         tomcatConnectionPool = new TomcatConnectionPool();
-    }
-
-    @Override
-    public void destroy() {
-        simpleConnection.closeConnection();
     }
 
     @Override

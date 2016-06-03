@@ -1,12 +1,5 @@
 <%@ page import="ru.glaizier.util.Utils" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%
-    if("logout".equals(request.getParameter("logout"))){
-        request.getSession().invalidate();
-        response.sendRedirect(request.getRequestURI());
-        return;
-    }
-%>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

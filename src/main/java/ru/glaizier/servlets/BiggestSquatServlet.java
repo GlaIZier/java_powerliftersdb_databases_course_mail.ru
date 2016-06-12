@@ -2,6 +2,8 @@ package ru.glaizier.servlets;
 
 import ru.glaizier.dao.BiggestSquatDao;
 import ru.glaizier.domain.BiggestExercise;
+import ru.glaizier.domain.City;
+import ru.glaizier.hibernate.HibernateDao;
 import ru.glaizier.pool.postgres.PostgresConnectionPool;
 import ru.glaizier.pool.tomcat.TomcatConnectionPool;
 import ru.glaizier.simple.SimpleConnection;
@@ -19,6 +21,7 @@ public class BiggestSquatServlet extends HttpServlet {
 
     private static String PPOOL_PATH = Utils.getPpoolPath();
     private static String TPOOL_PATH = Utils.getTpoolPath();
+    private static String HIBERNATE_PATH = Utils.getHibernatePath();
 
     public static final String CONTENT_TYPE = "text/html; charset=UTF-8";
     public static final String SIMPLE_TEMPLATE_NAME = "biggest_squat.ftl";
@@ -26,6 +29,7 @@ public class BiggestSquatServlet extends HttpServlet {
     private BiggestSquatDao simpleConnection;
     private BiggestSquatDao postgresConnectionPool;
     private BiggestSquatDao tomcatConnectionPool;
+    private HibernateDao hibernateDao;
 
     @Override
     public void init() throws ServletException {
@@ -33,6 +37,7 @@ public class BiggestSquatServlet extends HttpServlet {
         postgresConnectionPool = new PostgresConnectionPool(Utils.getDbServerName(), Utils.getDbName(),
                 Utils.getDbUserName(), Utils.getDbPassword());
         tomcatConnectionPool = new TomcatConnectionPool();
+        hibernateDao = new HibernateDao();
     }
 
     @Override
@@ -45,6 +50,10 @@ public class BiggestSquatServlet extends HttpServlet {
             biggestSquat = postgresConnectionPool.getBiggestSquat();
         else if (request.getServletPath().equals(TPOOL_PATH))
             biggestSquat = tomcatConnectionPool.getBiggestSquat();
+        else if (request.getServletPath().equals(HIBERNATE_PATH)) {
+            City city = hibernateDao.testApp();
+            biggestSquat = new BiggestExercise(city.getCityName(), city.getCityName(), city.getCityId(), null, city.getCityId());
+        }
         else
             biggestSquat = simpleConnection.getBiggestSquat();
 

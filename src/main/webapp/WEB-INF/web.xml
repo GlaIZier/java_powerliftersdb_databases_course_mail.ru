@@ -78,6 +78,11 @@
         <url-pattern>${path.tpool}</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>BiggestSquatServlet</servlet-name>
+        <url-pattern>${path.hibernate}</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>

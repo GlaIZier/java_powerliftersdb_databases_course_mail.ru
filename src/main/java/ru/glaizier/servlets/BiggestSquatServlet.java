@@ -41,6 +41,11 @@ public class BiggestSquatServlet extends HttpServlet {
     }
 
     @Override
+    public void destroy() {
+        hibernateDao.destroy();
+    }
+
+    @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("utf-8");
         response.setContentType(CONTENT_TYPE);

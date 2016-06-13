@@ -22,7 +22,7 @@
         <property name="hibernate.hbm2ddl.auto">validate</property>
 
         <!-- Annotated entity classes -->
-        <!--<mapping class="com.jvmhub.tutorial.entity.AppUser"/>-->
+        <mapping class="ru.glaizier.domain.City"/>
 
     </session-factory>
 </hibernate-configuration>

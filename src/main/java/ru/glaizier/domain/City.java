@@ -2,6 +2,7 @@ package ru.glaizier.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name="city",
@@ -15,6 +16,9 @@ public class City implements Serializable {
 
     @Column(name="city_name")
     private String cityName;
+
+    @OneToMany(mappedBy = "city")
+    private Set<Powerlifter> powerlifters;
 
     public int getCityId() {
         return cityId;
@@ -30,5 +34,13 @@ public class City implements Serializable {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public Set<Powerlifter> getPowerlifters() {
+        return powerlifters;
+    }
+
+    public void setPowerlifters(Set<Powerlifter> powerlifters) {
+        this.powerlifters = powerlifters;
     }
 }

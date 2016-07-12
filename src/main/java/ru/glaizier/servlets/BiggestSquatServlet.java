@@ -2,7 +2,7 @@ package ru.glaizier.servlets;
 
 import ru.glaizier.dao.BiggestSquatDao;
 import ru.glaizier.domain.BiggestExercise;
-import ru.glaizier.domain.City;
+import ru.glaizier.domain.Powerlifter;
 import ru.glaizier.hibernate.HibernateDao;
 import ru.glaizier.pool.postgres.PostgresConnectionPool;
 import ru.glaizier.pool.tomcat.TomcatConnectionPool;
@@ -56,8 +56,9 @@ public class BiggestSquatServlet extends HttpServlet {
         else if (request.getServletPath().equals(TPOOL_PATH))
             biggestSquat = tomcatConnectionPool.getBiggestSquat();
         else if (request.getServletPath().equals(HIBERNATE_PATH)) {
-            City city = hibernateDao.testApp();
-            biggestSquat = new BiggestExercise(city.getCityName(), city.getCityName(), city.getCityId(), null, city.getCityId());
+            Powerlifter powerlifter = hibernateDao.testPowerlifterMapping();
+            biggestSquat = new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
+                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());
         }
         else
             biggestSquat = simpleConnection.getBiggestSquat();

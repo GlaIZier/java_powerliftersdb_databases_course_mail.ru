@@ -23,6 +23,7 @@
 
         <!-- Annotated entity classes -->
         <mapping class="ru.glaizier.domain.City"/>
+        <mapping class="ru.glaizier.domain.Powerlifter"/>
 
     </session-factory>
 </hibernate-configuration>

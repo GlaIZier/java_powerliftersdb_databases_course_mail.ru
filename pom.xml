@@ -154,6 +154,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.2.0.Final</version>
         </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+        </dependency>
 
         <!--Tests-->
         <dependency>

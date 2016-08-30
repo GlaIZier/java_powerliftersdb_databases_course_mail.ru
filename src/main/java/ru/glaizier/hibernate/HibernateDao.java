@@ -1,6 +1,12 @@
 package ru.glaizier.hibernate;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.glaizier.domain.City;
+import ru.glaizier.domain.Powerlifter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,32 +15,32 @@ import java.util.List;
 
 public class HibernateDao {
 
-//    private final StandardServiceRegistry registry;
-//
-//    private final SessionFactory sessionFactory;
-//
-//    public HibernateDao() {
-//        registry = new StandardServiceRegistryBuilder()
-//                .configure() // get settings from hibernate.cfg.xml from classpath
-//                .build();
-//        sessionFactory = new MetadataSources(registry)
-////                .addAnnotatedClass(City.class)
-//                .buildMetadata().buildSessionFactory();
-//    }
-//
-//    public City testCityMapping() {
-//        try (Session session = sessionFactory.openSession()) {
-//            City city = session.get(City.class, 1);
-//            return city;
-//        }
-//    }
-//
-//    public Powerlifter testPowerlifterMapping() {
-//        try (Session session = sessionFactory.openSession()) {
-//            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
-//            return powerlifter;
-//        }
-//    }
+    private final StandardServiceRegistry registry;
+
+    private final SessionFactory sessionFactory;
+
+    public HibernateDao() {
+        registry = new StandardServiceRegistryBuilder()
+                .configure() // get settings from hibernate.cfg.xml from classpath
+                .build();
+        sessionFactory = new MetadataSources(registry)
+//                .addAnnotatedClass(City.class)
+                .buildMetadata().buildSessionFactory();
+    }
+
+    public City testCityMapping() {
+        try (Session session = sessionFactory.openSession()) {
+            City city = session.get(City.class, 1);
+            return city;
+        }
+    }
+
+    public Powerlifter testPowerlifterMapping() {
+        try (Session session = sessionFactory.openSession()) {
+            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
+            return powerlifter;
+        }
+    }
 
     public void testJpa() {
         EntityManagerFactory entityManagerFactory =
@@ -98,8 +104,8 @@ public class HibernateDao {
 //    }
 
 
-//    public void destroy() {
-//        StandardServiceRegistryBuilder.destroy(registry);
-//    }
+    public void destroy() {
+        StandardServiceRegistryBuilder.destroy(registry);
+    }
 
 }

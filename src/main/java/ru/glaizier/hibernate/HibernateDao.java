@@ -1,40 +1,53 @@
 package ru.glaizier.hibernate;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.glaizier.domain.City;
-import ru.glaizier.domain.Powerlifter;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
 
 public class HibernateDao {
 
-    private final StandardServiceRegistry registry;
+//    private final StandardServiceRegistry registry;
+//
+//    private final SessionFactory sessionFactory;
+//
+//    public HibernateDao() {
+//        registry = new StandardServiceRegistryBuilder()
+//                .configure() // get settings from hibernate.cfg.xml from classpath
+//                .build();
+//        sessionFactory = new MetadataSources(registry)
+////                .addAnnotatedClass(City.class)
+//                .buildMetadata().buildSessionFactory();
+//    }
+//
+//    public City testCityMapping() {
+//        try (Session session = sessionFactory.openSession()) {
+//            City city = session.get(City.class, 1);
+//            return city;
+//        }
+//    }
+//
+//    public Powerlifter testPowerlifterMapping() {
+//        try (Session session = sessionFactory.openSession()) {
+//            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
+//            return powerlifter;
+//        }
+//    }
 
-    private final SessionFactory sessionFactory;
+    public void testJpa() {
+        EntityManagerFactory entityManagerFactory =
+                Persistence.createEntityManagerFactory("ru.glaizier.powerliftersdb.jpa");
 
-    public HibernateDao() {
-        registry = new StandardServiceRegistryBuilder()
-                .configure() // get settings from hibernate.cfg.xml from classpath
-                .build();
-        sessionFactory = new MetadataSources(registry)
-//                .addAnnotatedClass(City.class)
-                .buildMetadata().buildSessionFactory();
-    }
-
-    public City testCityMapping() {
-        try (Session session = sessionFactory.openSession()) {
-            City city = session.get(City.class, 1);
-            return city;
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        List<City> result = entityManager.createQuery("from City", City.class).getResultList();
+        for (City city : result) {
+            System.out.println("Event (" + city.getCityId() + ") : " + city.getCityName());
         }
-    }
-
-    public Powerlifter testPowerlifterMapping() {
-        try (Session session = sessionFactory.openSession()) {
-            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
-            return powerlifter;
-        }
+        entityManager.getTransaction().commit();
+        entityManagerFactory.close();
     }
 
     /*
@@ -85,8 +98,8 @@ public class HibernateDao {
 //    }
 
 
-    public void destroy() {
-        StandardServiceRegistryBuilder.destroy(registry);
-    }
+//    public void destroy() {
+//        StandardServiceRegistryBuilder.destroy(registry);
+//    }
 
 }

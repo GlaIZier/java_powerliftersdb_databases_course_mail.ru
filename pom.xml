@@ -85,15 +85,23 @@
                             <targetPath>WEB-INF</targetPath>
                         </webResource>
                         <!--Try to place here Resource not WebResource-->
-                        <webResource>
-                            <directory>src/main/resources</directory>
-                            <includes>
-                                <include>hibernate.cfg.xml</include>
-                            </includes>
-                            <filtering>true</filtering>
-                            <targetPath>WEB-INF/classes</targetPath>
-                            <!--<targetPath>resources</targetPath>-->
-                        </webResource>
+                        <!--<webResource>-->
+                        <!--<directory>src/main/resources</directory>-->
+                        <!--<includes>-->
+                        <!--<include>hibernate.cfg.xml</include>-->
+                        <!--</includes>-->
+                        <!--<filtering>true</filtering>-->
+                        <!--<targetPath>WEB-INF/classes</targetPath>-->
+                        <!--&lt;!&ndash;<targetPath>resources</targetPath>&ndash;&gt;-->
+                        <!--</webResource>-->
+                        <!--<webResource>-->
+                        <!--<directory>src/main/webapp/META-INF</directory>-->
+                        <!--<includes>-->
+                        <!--<include>persistence.xml</include>-->
+                        <!--</includes>-->
+                        <!--<filtering>true</filtering>-->
+                        <!--<targetPath>META-INF</targetPath>-->
+                        <!--</webResource>-->
                     </webResources>
                 </configuration>
             </plugin>
@@ -152,13 +160,19 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.0.Final</version>
+            <version>5.2.2.Final</version>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.2.2.Final</version>
         </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>javax</groupId>-->
+        <!--<artifactId>javaee-api</artifactId>-->
+        <!--<version>7.0</version>-->
+        <!--</dependency>-->
 
         <!--Tests-->
         <dependency>

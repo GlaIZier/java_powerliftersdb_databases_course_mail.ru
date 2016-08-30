@@ -2,7 +2,6 @@ package ru.glaizier.servlets;
 
 import ru.glaizier.dao.BiggestSquatDao;
 import ru.glaizier.domain.BiggestExercise;
-import ru.glaizier.domain.Powerlifter;
 import ru.glaizier.hibernate.HibernateDao;
 import ru.glaizier.pool.postgres.PostgresConnectionPool;
 import ru.glaizier.pool.tomcat.TomcatConnectionPool;
@@ -40,10 +39,10 @@ public class BiggestSquatServlet extends HttpServlet {
         hibernateDao = new HibernateDao();
     }
 
-    @Override
-    public void destroy() {
-        hibernateDao.destroy();
-    }
+//    @Override
+//    public void destroy() {
+//        hibernateDao.destroy();
+//    }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -56,9 +55,11 @@ public class BiggestSquatServlet extends HttpServlet {
         else if (request.getServletPath().equals(TPOOL_PATH))
             biggestSquat = tomcatConnectionPool.getBiggestSquat();
         else if (request.getServletPath().equals(HIBERNATE_PATH)) {
-            Powerlifter powerlifter = hibernateDao.testPowerlifterMapping();
-            biggestSquat = new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
-                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());
+            hibernateDao.testJpa();
+//            Powerlifter powerlifter = hibernateDao.testPowerlifterMapping();
+//            biggestSquat = new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
+//                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());
+            biggestSquat = new BiggestExercise("test", "test", 1, null, 1);
         }
         else
             biggestSquat = simpleConnection.getBiggestSquat();

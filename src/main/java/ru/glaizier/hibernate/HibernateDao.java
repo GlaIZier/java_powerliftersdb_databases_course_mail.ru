@@ -50,7 +50,7 @@ public class HibernateDao {
         entityManager.getTransaction().begin();
         List<City> result = entityManager.createQuery("from City", City.class).getResultList();
         for (City city : result) {
-            System.out.println("Event (" + city.getCityId() + ") : " + city.getCityName());
+            System.out.println("City (" + city.getCityId() + ") : " + city.getCityName());
         }
         entityManager.getTransaction().commit();
         entityManagerFactory.close();

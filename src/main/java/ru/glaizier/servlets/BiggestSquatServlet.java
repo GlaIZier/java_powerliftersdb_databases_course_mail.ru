@@ -57,6 +57,7 @@ public class BiggestSquatServlet extends HttpServlet {
             biggestSquat = tomcatConnectionPool.getBiggestSquat();
         else if (request.getServletPath().equals(HIBERNATE_PATH)) {
             hibernateDao.testJpa();
+            hibernateDao.testQueryApi();
             Powerlifter powerlifter = hibernateDao.testPowerlifterMapping();
             biggestSquat = new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
                     powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());

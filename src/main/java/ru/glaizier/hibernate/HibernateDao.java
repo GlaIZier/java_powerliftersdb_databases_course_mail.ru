@@ -19,6 +19,10 @@ public class HibernateDao {
 
     private final SessionFactory sessionFactory;
 
+    private final EntityManagerFactory entityManagerFactory;
+
+    private final EntityManager entityManager;
+
     public HibernateDao() {
         registry = new StandardServiceRegistryBuilder()
                 .configure() // get settings from hibernate.cfg.xml from classpath
@@ -26,6 +30,11 @@ public class HibernateDao {
         sessionFactory = new MetadataSources(registry)
 //                .addAnnotatedClass(City.class)
                 .buildMetadata().buildSessionFactory();
+
+        entityManagerFactory =
+                Persistence.createEntityManagerFactory("ru.glaizier.powerliftersdb.jpa");
+
+        entityManager = entityManagerFactory.createEntityManager();
     }
 
     public City testCityMapping() {
@@ -43,17 +52,25 @@ public class HibernateDao {
     }
 
     public void testJpa() {
-        EntityManagerFactory entityManagerFactory =
-                Persistence.createEntityManagerFactory("ru.glaizier.powerliftersdb.jpa");
-
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
         List<City> result = entityManager.createQuery("from City", City.class).getResultList();
         for (City city : result) {
             System.out.println("City (" + city.getCityId() + ") : " + city.getCityName());
         }
         entityManager.getTransaction().commit();
-        entityManagerFactory.close();
+
+    }
+
+    public void testQueryApi() {
+        List<City> cities = entityManager.createQuery(
+                "select c " +
+                        "from City c " +
+                        "where c.cityName like :name", City.class
+        ).setParameter("name", "City1%")
+                .getResultList();
+        for (City city : cities) {
+            System.out.println("City (" + city.getCityId() + ") : " + city.getCityName());
+        }
     }
 
     /*
@@ -106,6 +123,7 @@ public class HibernateDao {
 
     public void destroy() {
         StandardServiceRegistryBuilder.destroy(registry);
+        entityManagerFactory.close();
     }
 
 }

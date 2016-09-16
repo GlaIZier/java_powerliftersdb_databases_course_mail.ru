@@ -2,7 +2,8 @@ package ru.glaizier.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="city",
@@ -18,7 +19,7 @@ public class City implements Serializable {
     private String cityName;
 
     @OneToMany(mappedBy = "city")
-    private Set<Powerlifter> powerlifters;
+    private List<Powerlifter> powerlifters = new ArrayList<>();
 
     public int getCityId() {
         return cityId;
@@ -36,11 +37,11 @@ public class City implements Serializable {
         this.cityName = cityName;
     }
 
-    public Set<Powerlifter> getPowerlifters() {
+    public List<Powerlifter> getPowerlifters() {
         return powerlifters;
     }
 
-    public void setPowerlifters(Set<Powerlifter> powerlifters) {
+    public void setPowerlifters(List<Powerlifter> powerlifters) {
         this.powerlifters = powerlifters;
     }
 }

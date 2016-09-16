@@ -73,6 +73,21 @@ public class HibernateDao {
         }
     }
 
+    public void testQueryApiObject() {
+        List<Powerlifter> objects = entityManager.createQuery(
+                "select p " +
+                        "from Powerlifter p " +
+                        "join p.city c " +
+                        "where p.powerlifterId = :powerlifterId"
+                , Powerlifter.class
+        )
+                .setParameter("powerlifterId", 1)
+                .getResultList();
+        for (Powerlifter objs : objects) {
+            System.out.println("Object (" + objs.getPowerlifterId() + ")");
+        }
+    }
+
     /*
     * select powerlifter.last_name, city.city_name
     * from powerlifter

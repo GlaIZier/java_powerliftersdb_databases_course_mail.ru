@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<h3>SimpleConnection test</h3>
+<#--<h3>SimpleConnection test</h3>-->
 <h4>Show biggest exercise for powerlifter</h4>
 <p>Biggest Squat for Power500:</p>
 <table border="1" width="100%">

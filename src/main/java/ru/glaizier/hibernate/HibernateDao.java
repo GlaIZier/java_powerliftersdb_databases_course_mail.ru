@@ -11,8 +11,11 @@ import ru.glaizier.domain.Powerlifter;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.Date;
 import java.util.List;
 
+// TODO one session for request (one transaction)
+// TODO one session factory for the whole application
 public class HibernateDao {
 
     private final StandardServiceRegistry registry;
@@ -58,7 +61,6 @@ public class HibernateDao {
             System.out.println("City (" + city.getCityId() + ") : " + city.getCityName());
         }
         entityManager.getTransaction().commit();
-
     }
 
     public void testQueryApi() {
@@ -86,6 +88,32 @@ public class HibernateDao {
         for (Powerlifter objs : objects) {
             System.out.println("Object (" + objs.getPowerlifterId() + ")");
         }
+    }
+
+    /**
+     * Just used this overkill query to check joins and subqueries in hql '1980-01-01'
+     *
+     * @param date
+     */
+    public void getFirstPowerlifterAfterDate(Date date) {
+        Object[] object = entityManager.createQuery(
+                "select p.lastName, p.birthdate, c.cityName " +
+                        "from Powerlifter p " +
+                        "join p.city c " +
+                        "where p.powerlifterId in (" +
+                        "   select pin.powerlifterId " +
+                        "   from Powerlifter pin" +
+                        "   where pin.birthdate >= :date " +
+                        "   order by pin.powerlifterId" +
+                        ") " +
+                        "order by p.birthdate"
+                , Object[].class)
+                .setParameter("date", date)
+                .setMaxResults(1)
+                .getSingleResult();
+        System.out.println("obj[0] = " + object[0]);
+        System.out.println("obj[1] = " + object[1]);
+        System.out.println("obj[2] = " + object[2]);
     }
 
     /*

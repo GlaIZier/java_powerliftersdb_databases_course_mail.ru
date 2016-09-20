@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +64,11 @@ public class BiggestSquatServlet extends HttpServlet {
             hibernateDao.testJpa();
             hibernateDao.testQueryApi();
             hibernateDao.testQueryApiObject();
-//            biggestSquat = new BiggestExercise("test", "test", 1, null, 1);
+            try {
+                hibernateDao.getFirstPowerlifterAfterDate(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         else
             biggestSquat = simpleConnection.getBiggestSquat();

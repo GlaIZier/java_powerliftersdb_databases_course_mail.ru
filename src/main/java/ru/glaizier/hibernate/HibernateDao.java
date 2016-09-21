@@ -7,10 +7,14 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.glaizier.domain.City;
 import ru.glaizier.domain.Powerlifter;
+import ru.glaizier.domain.Powerlifter_;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 
@@ -116,6 +120,18 @@ public class HibernateDao {
     }
 
     public void getFirstPowerlifterAfterDateCriteria(Date date) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Powerlifter> criteria = builder.createQuery(Powerlifter.class);
+        Root<Powerlifter> root = criteria.from(Powerlifter.class);
+        criteria.select(root);
+        criteria.where(builder.equal(root.get(Powerlifter_.powerlifterId), 1));
+
+        List<Powerlifter> powerlifters = entityManager.createQuery(criteria).getResultList();
+
+        for (Powerlifter powerlifter : powerlifters) {
+            System.out.println("powerlifter.getLastName() = " + powerlifter.getLastName());
+        }
 
     }
 

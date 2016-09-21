@@ -43,6 +43,7 @@
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
+                    <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
 
@@ -84,7 +85,6 @@
                             <filtering>true</filtering>
                             <targetPath>WEB-INF</targetPath>
                         </webResource>
-                        <!--Try to place here Resource not WebResource-->
                         <webResource>
                             <directory>src/main/resources</directory>
                             <includes>
@@ -114,6 +114,33 @@
                     <url>http://${glaizier.server}:${glaizier.tomcat.port}/manager/text</url>
                     <path>/${glaizier.tomcat.path}</path>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.0.5</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <processors>
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-jpamodelgen</artifactId>
+                        <version>5.2.2.Final</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
         </plugins>
@@ -164,6 +191,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.2.2.Final</version>
+        </dependency>
+        <!--JPA2 metamodel generator-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
             <version>5.2.2.Final</version>
         </dependency>
 

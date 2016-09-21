@@ -91,11 +91,10 @@ public class HibernateDao {
     }
 
     /**
-     * Just used this overkill query to check joins and subqueries in hql '1980-01-01'
-     *
-     * @param date
+     * Just used this overkill query to check joins and subqueries in hql, criteria and native '
+     * @param date first born powerlifter after this date
      */
-    public void getFirstPowerlifterAfterDate(Date date) {
+    public void getFirstPowerlifterAfterDateHql(Date date) {
         Object[] object = entityManager.createQuery(
                 "select p.lastName, p.birthdate, c.cityName " +
                         "from Powerlifter p " +
@@ -111,9 +110,36 @@ public class HibernateDao {
                 .setParameter("date", date)
                 .setMaxResults(1)
                 .getSingleResult();
-        System.out.println("obj[0] = " + object[0]);
-        System.out.println("obj[1] = " + object[1]);
-        System.out.println("obj[2] = " + object[2]);
+        System.out.println("Hql: obj[0] = " + object[0]);
+        System.out.println("Hql: obj[1] = " + object[1]);
+        System.out.println("Hql: obj[2] = " + object[2]);
+    }
+
+    public void getFirstPowerlifterAfterDateCriteria(Date date) {
+
+    }
+
+
+    public void getFirstPowerlifterAfterDateNative(Date date) {
+        List<Object[]> object = entityManager.createNativeQuery(
+                "select p.last_name, p.birthdate, c.city_name " +
+                        "from powerlifter p " +
+                        "join city c " +
+                        "on (p.city_id = c.city_id) " +
+                        "where p.powerlifter_id in (" +
+                        "   select pin.powerlifter_id " +
+                        "   from powerlifter pin" +
+                        "   where pin.birthdate >= :date " +
+                        "   order by pin.powerlifter_id" +
+                        ") " +
+                        "order by p.birthdate " +
+                        "limit 1"
+        )
+                .setParameter("date", date)
+                .getResultList();
+        System.out.println("Native: obj[0] = " + object.get(0)[0]);
+        System.out.println("Native: obj[1] = " + object.get(0)[1]);
+        System.out.println("Native: obj[2] = " + object.get(0)[2]);
     }
 
     /*

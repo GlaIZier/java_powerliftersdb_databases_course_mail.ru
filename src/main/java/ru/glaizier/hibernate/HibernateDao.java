@@ -14,6 +14,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
@@ -122,16 +123,33 @@ public class HibernateDao {
     public void getFirstPowerlifterAfterDateCriteria(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<Powerlifter> criteria = builder.createQuery(Powerlifter.class);
-        Root<Powerlifter> root = criteria.from(Powerlifter.class);
-        criteria.select(root);
-        criteria.where(builder.equal(root.get(Powerlifter_.powerlifterId), 1));
+        CriteriaQuery<Powerlifter> powerlifterCriteria = builder.createQuery(Powerlifter.class);
+        Root<Powerlifter> powerlifterRoot = powerlifterCriteria.from(Powerlifter.class);
 
-        List<Powerlifter> powerlifters = entityManager.createQuery(criteria).getResultList();
+        Join<Powerlifter, City> powerlifterCityJoin = powerlifterRoot.join(Powerlifter_.city);
+        powerlifterCriteria.where(builder.equal(powerlifterRoot.get(Powerlifter_.powerlifterId), 1));
 
-        for (Powerlifter powerlifter : powerlifters) {
-            System.out.println("powerlifter.getLastName() = " + powerlifter.getLastName());
-        }
+        Powerlifter powerlifter = entityManager.createQuery(powerlifterCriteria).getSingleResult();
+        System.out.println("powerlifter.getLastName() = " + powerlifter.getLastName());
+        System.out.println("powerlifter.getCity().getCityName() = " + powerlifter.getCity().getCityName());
+
+        /**
+         * Bad variant because it use two queries. First it fetches city join powerlifter where powerlifter_id =?
+         * Then fetches all powerlifters with city_id = city_id from 1st query.
+         * So we get all powerlifters with city_id = city_id from first query
+         */
+
+//        CriteriaQuery<City> criteria = builder.createQuery(City.class);
+//        Root<City> cityRoot = criteria.from(City.class);
+//
+//        Join<City, Powerlifter> cityPowerlifterJoin = cityRoot.join(City_.powerlifters);
+//        criteria.where(builder.equal(cityPowerlifterJoin.get(Powerlifter_.powerlifterId), 1));
+//
+//        City city = entityManager.createQuery(criteria).getSingleResult();
+//        System.out.println("city.getPowerlifters().get(0).getLastName() = " + city.getPowerlifters().get(0).getLastName());
+//        System.out.println("city.getCityName() = " + city.getCityName());
+//        System.out.println("city.getPowerlifters().get(0).getCountryId() = " + city.getPowerlifters().get(0).getCountryId());
+//        System.out.println("city.getPowerlifters().get(1).getLastName() = " + city.getPowerlifters().get(1).getLastName());
 
     }
 

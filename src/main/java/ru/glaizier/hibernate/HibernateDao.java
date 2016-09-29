@@ -12,10 +12,7 @@ import ru.glaizier.domain.Powerlifter_;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
@@ -97,6 +94,7 @@ public class HibernateDao {
 
     /**
      * Just used this overkill query to check joins and subqueries in hql, criteria and native '
+     *
      * @param date first born powerlifter after this date
      */
     public void getFirstPowerlifterAfterDateHql(Date date) {
@@ -120,16 +118,29 @@ public class HibernateDao {
         System.out.println("Hql: obj[2] = " + object[2]);
     }
 
+    /*
+    * select powerlifter.last_name, city.city_name
+    * from powerlifter
+    * join city
+    * on (powerlifter.city_id = city.city_id)
+    * where powerlifter_id =
+    *   (select powerlifter_id
+    *   from powerlifter
+    *   where powerlifter.birthday >= '1970-01-01'::date
+    *   order by powerlifter_id
+    *   limit 1)
+    * */
     public void getFirstPowerlifterAfterDateCriteria(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<Powerlifter> powerlifterCriteria = builder.createQuery(Powerlifter.class);
-        Root<Powerlifter> powerlifterRoot = powerlifterCriteria.from(Powerlifter.class);
-
+        // Get powerlifter
+        CriteriaQuery<Powerlifter> powerlifterCriteriaQuery = builder.createQuery(Powerlifter.class);
+        Root<Powerlifter> powerlifterRoot = powerlifterCriteriaQuery.from(Powerlifter.class);
+        // Join city to it
         Join<Powerlifter, City> powerlifterCityJoin = powerlifterRoot.join(Powerlifter_.city);
-        powerlifterCriteria.where(builder.equal(powerlifterRoot.get(Powerlifter_.powerlifterId), 1));
+        powerlifterCriteriaQuery.where(builder.equal(powerlifterRoot.get(Powerlifter_.powerlifterId), 1));
 
-        Powerlifter powerlifter = entityManager.createQuery(powerlifterCriteria).getSingleResult();
+        Powerlifter powerlifter = entityManager.createQuery(powerlifterCriteriaQuery).getSingleResult();
         System.out.println("powerlifter.getLastName() = " + powerlifter.getLastName());
         System.out.println("powerlifter.getCity().getCityName() = " + powerlifter.getCity().getCityName());
 
@@ -151,6 +162,37 @@ public class HibernateDao {
 //        System.out.println("city.getPowerlifters().get(0).getCountryId() = " + city.getPowerlifters().get(0).getCountryId());
 //        System.out.println("city.getPowerlifters().get(1).getLastName() = " + city.getPowerlifters().get(1).getLastName());
 
+
+//        CriteriaQuery<Powerlifter> powerlifterCriteriaSub = builder.createQuery(Powerlifter.class);
+//        DetachedCriteria subCriteria = DetachedCriteria.forClass(Powerlifter.class)
+//                .add(Property.forName("birthday").gt(date))
+//                .addOrder(Order.asc("birthday"));
+
+    }
+
+    public void getFirstPowerlifterAfterDateCriteriaSubquery(Date date) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Powerlifter> mainCriteriaQuery = builder.createQuery(Powerlifter.class);
+        Root<Powerlifter> powerlifterRoot = mainCriteriaQuery.from(Powerlifter.class);
+        CriteriaQuery<Powerlifter> select = mainCriteriaQuery.select(powerlifterRoot);
+
+        Subquery<Powerlifter> powerlifterSubquery = mainCriteriaQuery.subquery(Powerlifter.class);
+        Root<Powerlifter> powerlifterSubqueryRoot = powerlifterSubquery.from(Powerlifter.class);
+        powerlifterSubquery.select(powerlifterSubqueryRoot.get("powerlifterId"));
+        powerlifterSubquery.where(builder.equal(powerlifterSubqueryRoot.get("powerlifterId"), 1));
+//        powerlifterSubquery.where(builder.greaterThanOrEqualTo(powerlifterSubqueryRoot.<Date>get("birthdate"), date));
+
+//        mainCriteriaQuery.orderBy(builder.asc(powerlifterSubqueryRoot.get("birthdate")));
+
+        select.where(builder.equal(powerlifterRoot.get(Powerlifter_.powerlifterId), powerlifterSubquery));
+
+        List<Powerlifter> powerlifters = entityManager.createQuery(select).getResultList();
+
+        for (Powerlifter pw : powerlifters) {
+            System.out.println("pw.getLastName() = " + pw.getLastName());
+            System.out.println("pw.getCity().getCityName() = " + pw.getBirthdate());
+        }
     }
 
 

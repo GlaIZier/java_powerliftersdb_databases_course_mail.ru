@@ -122,15 +122,9 @@ public class HibernateDao {
     * select powerlifter.last_name, city.city_name
     * from powerlifter
     * join city
-    * on (powerlifter.city_id = city.city_id)
-    * where powerlifter_id =
-    *   (select powerlifter_id
-    *   from powerlifter
-    *   where powerlifter.birthday >= '1970-01-01'::date
-    *   order by powerlifter_id
-    *   limit 1)
+    * on (powerlifter.city_id = city.city_id);
     * */
-    public void getFirstPowerlifterAfterDateCriteria(Date date) {
+    public void testJpaCriteriaJoin(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         // Get powerlifter
@@ -170,22 +164,32 @@ public class HibernateDao {
 
     }
 
-    public void getFirstPowerlifterAfterDateCriteriaSubquery(Date date) {
+    /*
+    * select powerlifter.last_name, city.city_name
+    * from powerlifter
+    * where powerlifter_id =
+    *   (select powerlifter_id
+    *   from powerlifter
+    *   where powerlifter.id = 1
+    *   limit 1)
+    * */
+    public void testJpaCriteriaSubquery(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Powerlifter> mainCriteriaQuery = builder.createQuery(Powerlifter.class);
         Root<Powerlifter> powerlifterRoot = mainCriteriaQuery.from(Powerlifter.class);
         CriteriaQuery<Powerlifter> select = mainCriteriaQuery.select(powerlifterRoot);
 
-        Subquery<Powerlifter> powerlifterSubquery = mainCriteriaQuery.subquery(Powerlifter.class);
+        Subquery<Integer> powerlifterSubquery = mainCriteriaQuery.subquery(Integer.class);
         Root<Powerlifter> powerlifterSubqueryRoot = powerlifterSubquery.from(Powerlifter.class);
-        powerlifterSubquery.select(powerlifterSubqueryRoot.get("powerlifterId"));
-        powerlifterSubquery.where(builder.equal(powerlifterSubqueryRoot.get("powerlifterId"), 1));
+        Path<Integer> subqueryPowerlifterIdPath = powerlifterSubqueryRoot.get(Powerlifter_.powerlifterId);
+        powerlifterSubquery.select(subqueryPowerlifterIdPath);
+        powerlifterSubquery.where(builder.equal(powerlifterSubqueryRoot.get(Powerlifter_.powerlifterId), 1));
 //        powerlifterSubquery.where(builder.greaterThanOrEqualTo(powerlifterSubqueryRoot.<Date>get("birthdate"), date));
 
 //        mainCriteriaQuery.orderBy(builder.asc(powerlifterSubqueryRoot.get("birthdate")));
-
-        select.where(builder.equal(powerlifterRoot.get(Powerlifter_.powerlifterId), powerlifterSubquery));
+        Path<Integer> powerlifterIdPath = powerlifterRoot.get(Powerlifter_.powerlifterId);
+        select.where(builder.equal(powerlifterIdPath, powerlifterSubquery));
 
         List<Powerlifter> powerlifters = entityManager.createQuery(select).getResultList();
 
@@ -193,6 +197,22 @@ public class HibernateDao {
             System.out.println("pw.getLastName() = " + pw.getLastName());
             System.out.println("pw.getCity().getCityName() = " + pw.getBirthdate());
         }
+    }
+
+    /*
+    * select powerlifter.last_name, city.city_name
+    * from powerlifter
+    * join city
+    * on (powerlifter.city_id = city.city_id)
+    * where powerlifter_id =
+    *   (select powerlifter_id
+    *   from powerlifter
+    *   where powerlifter.birthday >= '1970-01-01'::date
+    *   order by powerlifter_id
+    *   limit 1)
+    * */
+    public void getFirstPowerlifterAfterDateJpaCriteria(Date date) {
+
     }
 
 

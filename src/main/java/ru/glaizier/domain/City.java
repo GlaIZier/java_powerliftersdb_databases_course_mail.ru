@@ -18,6 +18,7 @@ public class City implements Serializable {
     @Column(name="city_name")
     private String cityName;
 
+    // TODO do lazy
     @OneToMany(mappedBy = "city")
     private List<Powerlifter> powerlifters = new ArrayList<>();
 

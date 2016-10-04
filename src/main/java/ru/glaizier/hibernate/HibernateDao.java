@@ -44,15 +44,13 @@ public class HibernateDao {
 
     public City testCityMapping() {
         try (Session session = sessionFactory.openSession()) {
-            City city = session.get(City.class, 1);
-            return city;
+            return session.get(City.class, 1);
         }
     }
 
     public Powerlifter testPowerlifterMapping() {
         try (Session session = sessionFactory.openSession()) {
-            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
-            return powerlifter;
+            return session.get(Powerlifter.class, 1);
         }
     }
 
@@ -165,37 +163,41 @@ public class HibernateDao {
     }
 
     /*
-    * select powerlifter.last_name, city.city_name
+    * select *
     * from powerlifter
     * where powerlifter_id =
     *   (select powerlifter_id
-    *   from powerlifter
-    *   where powerlifter.id = 1
-    *   limit 1)
+    *   from powerlifter p
+    *   where p.birthdate > :date
+    *   )
+    * order by birthdate
+    * limit 1;
     * */
     public void testJpaCriteriaSubquery(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Powerlifter> mainCriteriaQuery = builder.createQuery(Powerlifter.class);
-        Root<Powerlifter> powerlifterRoot = mainCriteriaQuery.from(Powerlifter.class);
-        CriteriaQuery<Powerlifter> select = mainCriteriaQuery.select(powerlifterRoot);
+        Root<Powerlifter> powerlifterRoot = mainCriteriaQuery.from(Powerlifter.class); // from powerlifter
+        CriteriaQuery<Powerlifter> select = mainCriteriaQuery.select(powerlifterRoot); // select *
 
         Subquery<Integer> powerlifterSubquery = mainCriteriaQuery.subquery(Integer.class);
         Root<Powerlifter> powerlifterSubqueryRoot = powerlifterSubquery.from(Powerlifter.class);
         Path<Integer> subqueryPowerlifterIdPath = powerlifterSubqueryRoot.get(Powerlifter_.powerlifterId);
-        powerlifterSubquery.select(subqueryPowerlifterIdPath);
-        powerlifterSubquery.where(builder.equal(powerlifterSubqueryRoot.get(Powerlifter_.powerlifterId), 1));
-//        powerlifterSubquery.where(builder.greaterThanOrEqualTo(powerlifterSubqueryRoot.<Date>get("birthdate"), date));
+        powerlifterSubquery.select(subqueryPowerlifterIdPath); // (select powerlifter_id
+        Path<Date> subqueryPowerlifterBirthdatePath = powerlifterSubqueryRoot.get(Powerlifter_.birthdate);
+        powerlifterSubquery.where(builder.greaterThanOrEqualTo(subqueryPowerlifterBirthdatePath, date)); // where p.birthdate > :date
 
-//        mainCriteriaQuery.orderBy(builder.asc(powerlifterSubqueryRoot.get("birthdate")));
         Path<Integer> powerlifterIdPath = powerlifterRoot.get(Powerlifter_.powerlifterId);
-        select.where(builder.equal(powerlifterIdPath, powerlifterSubquery));
+        select.where(powerlifterIdPath.in(powerlifterSubquery)); // where powerlifter_id in
 
-        List<Powerlifter> powerlifters = entityManager.createQuery(select).getResultList();
+        Path<Date> powerlifterBirthdatePath = powerlifterRoot.get(Powerlifter_.birthdate);
+        select.orderBy(builder.asc(powerlifterBirthdatePath)); // order by birthdate
+
+        List<Powerlifter> powerlifters = entityManager.createQuery(select).setMaxResults(1).getResultList(); // limit 1
 
         for (Powerlifter pw : powerlifters) {
             System.out.println("pw.getLastName() = " + pw.getLastName());
-            System.out.println("pw.getCity().getCityName() = " + pw.getBirthdate());
+            System.out.println("pw.getBirthdate() = " + pw.getBirthdate());
         }
     }
 
@@ -206,10 +208,11 @@ public class HibernateDao {
     * on (powerlifter.city_id = city.city_id)
     * where powerlifter_id =
     *   (select powerlifter_id
-    *   from powerlifter
-    *   where powerlifter.birthday >= '1970-01-01'::date
-    *   order by powerlifter_id
-    *   limit 1)
+    *   from powerlifter p
+    *   where p.birthday >= ':date
+    *   )
+    * rder by powerlifter_id
+    * limit 1
     * */
     public void getFirstPowerlifterAfterDateJpaCriteria(Date date) {
 

@@ -90,39 +90,13 @@ public class HibernateDao {
         }
     }
 
-    /**
-     * Just used this overkill query to check joins and subqueries in hql, criteria and native '
-     *
-     * @param date first born powerlifter after this date
-     */
-    public void getFirstPowerlifterAfterDateHql(Date date) {
-        Object[] object = entityManager.createQuery(
-                "select p.lastName, p.birthdate, c.cityName " +
-                        "from Powerlifter p " +
-                        "join p.city c " +
-                        "where p.powerlifterId in (" +
-                        "   select pin.powerlifterId " +
-                        "   from Powerlifter pin" +
-                        "   where pin.birthdate >= :date " +
-                        "   order by pin.powerlifterId" +
-                        ") " +
-                        "order by p.birthdate"
-                , Object[].class)
-                .setParameter("date", date)
-                .setMaxResults(1)
-                .getSingleResult();
-        System.out.println("Hql: obj[0] = " + object[0]);
-        System.out.println("Hql: obj[1] = " + object[1]);
-        System.out.println("Hql: obj[2] = " + object[2]);
-    }
-
     /*
-    * select powerlifter.last_name, city.city_name
-    * from powerlifter
-    * join city
-    * on (powerlifter.city_id = city.city_id);
-    * */
-    public void testJpaCriteriaJoin(Date date) {
+* select powerlifter.last_name, city.city_name
+* from powerlifter
+* join city
+* on (powerlifter.city_id = city.city_id);
+* */
+    public void testJpaCriteriaJoin() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         // Get powerlifter
@@ -153,12 +127,6 @@ public class HibernateDao {
 //        System.out.println("city.getCityName() = " + city.getCityName());
 //        System.out.println("city.getPowerlifters().get(0).getCountryId() = " + city.getPowerlifters().get(0).getCountryId());
 //        System.out.println("city.getPowerlifters().get(1).getLastName() = " + city.getPowerlifters().get(1).getLastName());
-
-
-//        CriteriaQuery<Powerlifter> powerlifterCriteriaSub = builder.createQuery(Powerlifter.class);
-//        DetachedCriteria subCriteria = DetachedCriteria.forClass(Powerlifter.class)
-//                .add(Property.forName("birthday").gt(date))
-//                .addOrder(Order.asc("birthday"));
 
     }
 
@@ -201,6 +169,32 @@ public class HibernateDao {
         }
     }
 
+    /**
+     * Just used this overkill query to check joins and subqueries in hql, criteria and native '
+     *
+     * @param date first born powerlifter after this date
+     */
+    public void getFirstPowerlifterAfterDateHql(Date date) {
+        Object[] object = entityManager.createQuery(
+                "select p.lastName, p.birthdate, c.cityName " +
+                        "from Powerlifter p " +
+                        "join p.city c " +
+                        "where p.powerlifterId in (" +
+                        "   select pin.powerlifterId " +
+                        "   from Powerlifter pin" +
+                        "   where pin.birthdate >= :date " +
+                        "   order by pin.powerlifterId" +
+                        ") " +
+                        "order by p.birthdate"
+                , Object[].class)
+                .setParameter("date", date)
+                .setMaxResults(1)
+                .getSingleResult();
+        System.out.println("Hql: obj[0] = " + object[0]);
+        System.out.println("Hql: obj[1] = " + object[1]);
+        System.out.println("Hql: obj[2] = " + object[2]);
+    }
+
     /*
     * select powerlifter.last_name, city.city_name
     * from powerlifter
@@ -211,10 +205,39 @@ public class HibernateDao {
     *   from powerlifter p
     *   where p.birthday >= ':date
     *   )
-    * rder by powerlifter_id
+    * order by powerlifter_id
     * limit 1
     * */
     public void getFirstPowerlifterAfterDateJpaCriteria(Date date) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        // Get powerlifter
+        CriteriaQuery<Powerlifter> mainCriteriaQuery = builder.createQuery(Powerlifter.class);
+        Root<Powerlifter> powerlifterRoot = mainCriteriaQuery.from(Powerlifter.class);
+        // Join city to it
+        Join<Powerlifter, City> powerlifterCityJoin = powerlifterRoot.join(Powerlifter_.city); // join city on (powerlifter.city_id = city.city_id)
+        CriteriaQuery<Powerlifter> select = mainCriteriaQuery.select(powerlifterRoot); // select *
+
+        Subquery<Integer> powerlifterSubquery = mainCriteriaQuery.subquery(Integer.class);
+        Root<Powerlifter> powerlifterSubqueryRoot = powerlifterSubquery.from(Powerlifter.class);
+        Path<Integer> subqueryPowerlifterIdPath = powerlifterSubqueryRoot.get(Powerlifter_.powerlifterId);
+        powerlifterSubquery.select(subqueryPowerlifterIdPath); // (select powerlifter_id
+        Path<Date> subqueryPowerlifterBirthdatePath = powerlifterSubqueryRoot.get(Powerlifter_.birthdate);
+        powerlifterSubquery.where(builder.greaterThanOrEqualTo(subqueryPowerlifterBirthdatePath, date)); // where p.birthdate > :date
+
+        Path<Integer> powerlifterIdPath = powerlifterRoot.get(Powerlifter_.powerlifterId);
+        select.where(powerlifterIdPath.in(powerlifterSubquery)); // where powerlifter_id in
+
+        Path<Date> powerlifterBirthdatePath = powerlifterRoot.get(Powerlifter_.birthdate);
+        select.orderBy(builder.asc(powerlifterBirthdatePath)); // order by birthdate
+
+        List<Powerlifter> powerlifters = entityManager.createQuery(select).setMaxResults(1).getResultList(); // limit 1
+
+        for (Powerlifter pw : powerlifters) {
+            System.out.println("pw.getLastName() = " + pw.getLastName());
+            System.out.println("pw.getBirthdate() = " + pw.getBirthdate());
+            System.out.println("pw.getCity().getCityName() = " + pw.getCity().getCityName());
+        }
 
     }
 

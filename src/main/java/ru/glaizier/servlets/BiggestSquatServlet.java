@@ -67,8 +67,9 @@ public class BiggestSquatServlet extends HttpServlet {
             try {
                 hibernateDao.getFirstPowerlifterAfterDateHql(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
                 hibernateDao.getFirstPowerlifterAfterDateNative(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
-                hibernateDao.testJpaCriteriaJoin(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
+                hibernateDao.testJpaCriteriaJoin();
                 hibernateDao.testJpaCriteriaSubquery(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
+                hibernateDao.getFirstPowerlifterAfterDateJpaCriteria(new SimpleDateFormat("yyyy-MM-dd").parse("1980-01-01"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }

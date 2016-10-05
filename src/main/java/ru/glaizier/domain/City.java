@@ -19,7 +19,7 @@ public class City implements Serializable {
     private String cityName;
 
     // TODO do lazy
-    @OneToMany(mappedBy = "city")
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
     private List<Powerlifter> powerlifters = new ArrayList<>();
 
     public int getCityId() {

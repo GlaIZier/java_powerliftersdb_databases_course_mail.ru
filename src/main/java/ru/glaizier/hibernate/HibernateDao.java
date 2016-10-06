@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 
 // TODO one session for request (one transaction)
-// TODO one session factory for the whole application
 public class HibernateDao {
 
     private final StandardServiceRegistry registry;
@@ -33,7 +32,6 @@ public class HibernateDao {
                 .configure() // get settings from hibernate.cfg.xml from classpath
                 .build();
         sessionFactory = new MetadataSources(registry)
-//                .addAnnotatedClass(City.class)
                 .buildMetadata().buildSessionFactory();
 
         entityManagerFactory =
@@ -42,25 +40,23 @@ public class HibernateDao {
         entityManager = entityManagerFactory.createEntityManager();
     }
 
-    public City testCityMapping() {
+    public City testHibernateCityMapping() {
         try (Session session = sessionFactory.openSession()) {
             return session.get(City.class, 1);
         }
     }
 
-    public Powerlifter testPowerlifterMapping() {
+    public Powerlifter testHibernatePowerlifterMapping() {
         try (Session session = sessionFactory.openSession()) {
             return session.get(Powerlifter.class, 1);
         }
     }
 
     public void testJpa() {
-        entityManager.getTransaction().begin();
         List<City> result = entityManager.createQuery("from City", City.class).getResultList();
         for (City city : result) {
             System.out.println("City (" + city.getCityId() + ") : " + city.getCityName());
         }
-        entityManager.getTransaction().commit();
     }
 
     public void testQueryApi() {
@@ -91,11 +87,11 @@ public class HibernateDao {
     }
 
     /*
-* select powerlifter.last_name, city.city_name
-* from powerlifter
-* join city
-* on (powerlifter.city_id = city.city_id);
-* */
+    * select powerlifter.last_name, city.city_name
+    * from powerlifter
+    * join city
+    * on (powerlifter.city_id = city.city_id);
+    * */
     public void testJpaCriteriaJoin() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -114,19 +110,21 @@ public class HibernateDao {
          * Bad variant because it use two queries. First it fetches city join powerlifter where powerlifter_id =?
          * Then fetches all powerlifters with city_id = city_id from 1st query.
          * So we get all powerlifters with city_id = city_id from first query
+         *
+         *   CriteriaQuery<City> criteria = builder.createQuery(City.class);
+         Root<City> cityRoot = criteria.from(City.class);
+
+         Join<City, Powerlifter> cityPowerlifterJoin = cityRoot.join(City_.powerlifters);
+         criteria.where(builder.equal(cityPowerlifterJoin.get(Powerlifter_.powerlifterId), 1));
+
+         City city = entityManager.createQuery(criteria).getSingleResult();
+         System.out.println("city.getPowerlifters().get(0).getLastName() = " + city.getPowerlifters().get(0).getLastName());
+         System.out.println("city.getCityName() = " + city.getCityName());
+         System.out.println("city.getPowerlifters().get(0).getCountryId() = " + city.getPowerlifters().get(0).getCountryId());
+         System.out.println("city.getPowerlifters().get(1).getLastName() = " + city.getPowerlifters().get(1).getLastName());
          */
 
-//        CriteriaQuery<City> criteria = builder.createQuery(City.class);
-//        Root<City> cityRoot = criteria.from(City.class);
-//
-//        Join<City, Powerlifter> cityPowerlifterJoin = cityRoot.join(City_.powerlifters);
-//        criteria.where(builder.equal(cityPowerlifterJoin.get(Powerlifter_.powerlifterId), 1));
-//
-//        City city = entityManager.createQuery(criteria).getSingleResult();
-//        System.out.println("city.getPowerlifters().get(0).getLastName() = " + city.getPowerlifters().get(0).getLastName());
-//        System.out.println("city.getCityName() = " + city.getCityName());
-//        System.out.println("city.getPowerlifters().get(0).getCountryId() = " + city.getPowerlifters().get(0).getCountryId());
-//        System.out.println("city.getPowerlifters().get(1).getLastName() = " + city.getPowerlifters().get(1).getLastName());
+
 
     }
 
@@ -264,56 +262,11 @@ public class HibernateDao {
         System.out.println("Native: obj[2] = " + object.get(0)[2]);
     }
 
-    /*
-    * select powerlifter.last_name, city.city_name
-    * from powerlifter
-    * join city
-    * on (powerlifter.city_id = city.city_id)
-    * where powerlifter_id =
-    *   (select powerlifter_id
-    *   from powerlifter
-    *   where powerlifter.birthday >= '1970-01-01'::date
-    *   order by powerlifter_id
-    *   limit 1)
-    * */
-    /*
-    select *
-    from city
-    where city_id =
-        (select city_id
-        from powerlifter
-        group by city_id
-        order by count(city_id)
-        limit 1)
-     */
-
-//    public Powerlifter getEldestPowerlifter() {
-//        DetachedCriteria userSubquery = DetachedCriteria.forClass(Powerlifter.class, "powerlifter")
-//                // Filter the Subquery
-//                .add(Restrictions.eq(Powerlifter, domain))
-//                // SELECT The User Id
-//                .setProjection( Projections.property("ud.userId") );
-//    }
-
-//    public void testCriteria() {
-//        EntityManagerFactory factory = Persistence.createEntityManagerFactory()
-//
-//
-//        sessionFactory.openSession().createCr
-//        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-//
-//        CriteriaQuery<Powerlifter> criteria = builder.createQuery( Powerlifter.class );
-//        Root<Powerlifter> root = criteria.from( Powerlifter.class );
-//        criteria.select( root );
-//        criteria.where( builder.equal( root.get( Powerlifter_.city_id ), "John Doe" ) );
-//        criteria.subquery()
-//
-//        List<Powerlifter> persons = entityManager.createQuery( criteria ).getResultList();
-//    }
-
-
     public void destroy() {
         StandardServiceRegistryBuilder.destroy(registry);
+        sessionFactory.close();
+
+        entityManager.close();
         entityManagerFactory.close();
     }
 

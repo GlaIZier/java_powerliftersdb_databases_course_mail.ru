@@ -32,7 +32,7 @@ public class Powerlifter implements Serializable {
     @Column(name = "country_id")
     private int countryId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
 

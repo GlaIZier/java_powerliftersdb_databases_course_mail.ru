@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import ru.glaizier.domain.BiggestExercise;
 import ru.glaizier.domain.City;
 import ru.glaizier.domain.Powerlifter;
 import ru.glaizier.domain.Powerlifter_;
@@ -16,7 +17,7 @@ import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
-// TODO one session for request (one transaction)
+//TODO do proper views, move to docker
 public class HibernateDao {
 
     private final StandardServiceRegistry registry;
@@ -46,9 +47,15 @@ public class HibernateDao {
         }
     }
 
-    public Powerlifter testHibernatePowerlifterMapping() {
+    /**
+     * Because we have lazy initialization we need to get city within session or we'll get LazyInitializationException \
+     * because of the no session
+     */
+    public BiggestExercise testHibernatePowerliftingMapping() {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Powerlifter.class, 1);
+            Powerlifter powerlifter = session.get(Powerlifter.class, 1);
+            return new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
+                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());
         }
     }
 

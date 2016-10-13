@@ -61,6 +61,8 @@
                 </executions>
             </plugin>
 
+            <!-- Important! Place for config files inside war is important!
+             The place for configs inside project structure is important too -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

@@ -5,8 +5,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import ru.glaizier.domain.BiggestExercise;
 import ru.glaizier.domain.City;
+import ru.glaizier.domain.FirstPowerlifterAfterDate;
 import ru.glaizier.domain.Powerlifter;
 import ru.glaizier.domain.Powerlifter_;
 
@@ -18,6 +18,11 @@ import java.util.Date;
 import java.util.List;
 
 //TODO do proper views, move to docker
+
+/**
+ * This class contains methods to get data using Hibernate specific API (hibernate.cfg.xml)
+ * and JPA API (persistance.xml)
+ */
 public class HibernateDao {
 
     private final StandardServiceRegistry registry;
@@ -51,11 +56,11 @@ public class HibernateDao {
      * Because we have lazy initialization we need to get city within session or we'll get LazyInitializationException \
      * because of the no session
      */
-    public BiggestExercise testHibernatePowerliftingMapping() {
+    public FirstPowerlifterAfterDate testHibernatePowerliftingMapping() {
         try (Session session = sessionFactory.openSession()) {
             Powerlifter powerlifter = session.get(Powerlifter.class, 1);
-            return new BiggestExercise(powerlifter.getLastName(), powerlifter.getFirstName(),
-                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityId());
+            return new FirstPowerlifterAfterDate(powerlifter.getPowerlifterId(), powerlifter.getLastName(), powerlifter.getFirstName(),
+                    powerlifter.getSex(), powerlifter.getBirthdate(), powerlifter.getCity().getCityName());
         }
     }
 
@@ -179,9 +184,9 @@ public class HibernateDao {
      *
      * @param date first born powerlifter after this date
      */
-    public void getFirstPowerlifterAfterDateHql(Date date) {
+    public FirstPowerlifterAfterDate getFirstPowerlifterAfterDateHql(Date date) {
         Object[] object = entityManager.createQuery(
-                "select p.lastName, p.birthdate, c.cityName " +
+                "select p.powerlifterId, p.lastName, p.firstName, p.sex, p.birthdate, c.cityName " +
                         "from Powerlifter p " +
                         "join p.city c " +
                         "where p.powerlifterId in (" +
@@ -195,9 +200,9 @@ public class HibernateDao {
                 .setParameter("date", date)
                 .setMaxResults(1)
                 .getSingleResult();
-        System.out.println("Hql: obj[0] = " + object[0]);
-        System.out.println("Hql: obj[1] = " + object[1]);
-        System.out.println("Hql: obj[2] = " + object[2]);
+
+        return new FirstPowerlifterAfterDate((Integer) object[0], (String) object[1],
+                (String) object[2], (Short) object[3], (Date) object[4], (String) object[5]);
     }
 
     /*
@@ -208,12 +213,12 @@ public class HibernateDao {
     * where powerlifter_id =
     *   (select powerlifter_id
     *   from powerlifter p
-    *   where p.birthday >= ':date
+    *   where p.birthdate >= ':date
     *   )
     * order by powerlifter_id
     * limit 1
     * */
-    public void getFirstPowerlifterAfterDateJpaCriteria(Date date) {
+    public FirstPowerlifterAfterDate getFirstPowerlifterAfterDateJpaCriteria(Date date) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         // Get powerlifter
@@ -238,18 +243,15 @@ public class HibernateDao {
 
         List<Powerlifter> powerlifters = entityManager.createQuery(select).setMaxResults(1).getResultList(); // limit 1
 
-        for (Powerlifter pw : powerlifters) {
-            System.out.println("pw.getLastName() = " + pw.getLastName());
-            System.out.println("pw.getBirthdate() = " + pw.getBirthdate());
-            System.out.println("pw.getCity().getCityName() = " + pw.getCity().getCityName());
-        }
-
+        return new FirstPowerlifterAfterDate(powerlifters.get(0).getPowerlifterId(), powerlifters.get(0).getLastName(),
+                powerlifters.get(0).getFirstName(), powerlifters.get(0).getSex(), powerlifters.get(0).getBirthdate(),
+                powerlifters.get(0).getCity().getCityName());
     }
 
 
-    public void getFirstPowerlifterAfterDateNative(Date date) {
+    public FirstPowerlifterAfterDate getFirstPowerlifterAfterDateNative(Date date) {
         List<Object[]> object = entityManager.createNativeQuery(
-                "select p.last_name, p.birthdate, c.city_name " +
+                "select p.powerlifter_id, p.last_name, p.first_name, p.sex, p.birthdate, c.city_name " +
                         "from powerlifter p " +
                         "join city c " +
                         "on (p.city_id = c.city_id) " +
@@ -264,9 +266,9 @@ public class HibernateDao {
         )
                 .setParameter("date", date)
                 .getResultList();
-        System.out.println("Native: obj[0] = " + object.get(0)[0]);
-        System.out.println("Native: obj[1] = " + object.get(0)[1]);
-        System.out.println("Native: obj[2] = " + object.get(0)[2]);
+
+        return new FirstPowerlifterAfterDate((Integer) object.get(0)[0], (String) object.get(0)[1],
+                (String) object.get(0)[2], (Short) object.get(0)[3], (Date) object.get(0)[4], (String) object.get(0)[5]);
     }
 
     public void destroy() {

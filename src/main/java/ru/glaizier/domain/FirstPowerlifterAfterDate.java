@@ -2,7 +2,9 @@ package ru.glaizier.domain;
 
 import java.util.Date;
 
-public class BiggestExercise {
+public class FirstPowerlifterAfterDate {
+
+    private final int id;
 
     private final String lastName;
 
@@ -12,15 +14,19 @@ public class BiggestExercise {
 
     private final Date birthdate;
 
-    private final int resultInKg;
+    private final String birthplace;
 
-
-    public BiggestExercise(String lastName, String firstName, int sexIsoCode, Date birthdate, int resultInKg) {
+    public FirstPowerlifterAfterDate(int id, String lastName, String firstName, int sexIsoCode, Date birthdate, String birthplace) {
+        this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.sex = Sex.isoCodeToEnum(sexIsoCode);
         this.birthdate = birthdate;
-        this.resultInKg = resultInKg;
+        this.birthplace = birthplace;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getLastName() {
@@ -39,7 +45,7 @@ public class BiggestExercise {
         return birthdate;
     }
 
-    public int getResultInKg() {
-        return resultInKg;
+    public String getBirthplace() {
+        return birthplace;
     }
 }

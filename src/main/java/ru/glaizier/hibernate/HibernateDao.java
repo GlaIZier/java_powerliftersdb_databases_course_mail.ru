@@ -17,8 +17,6 @@ import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
-//TODO do proper views, move to docker
-
 /**
  * This class contains methods to get data using Hibernate specific API (hibernate.cfg.xml)
  * and JPA API (persistance.xml)

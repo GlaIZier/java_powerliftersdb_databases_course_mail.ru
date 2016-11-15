@@ -1,5 +1,5 @@
 <Context>
-
+    <!-- TODO check describe postgres ports for docker and do smth with it. maybe add another properties config -->
     <Resource name="jdbc/postgres"
               driverClassName="org.postgresql.Driver"
               url="${db.url}"

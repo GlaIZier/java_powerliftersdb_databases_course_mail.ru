@@ -35,6 +35,8 @@
             <filter>${project.basedir}/src/main/resources/profiles/${profile.name}.properties</filter>
         </filters>
 
+        <finalName>${project.name}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

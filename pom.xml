@@ -27,6 +27,15 @@
                 <glaizier.tomcat.port>8080</glaizier.tomcat.port>
             </properties>
         </profile>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <profile.name>docker</profile.name>
+                <glaizier.server>127.0.0.1</glaizier.server>
+                <glaizier.tomcat.path>${project.name}</glaizier.tomcat.path>
+                <glaizier.tomcat.port>8888</glaizier.tomcat.port>
+            </properties>
+        </profile>
     </profiles>
 
     <build>

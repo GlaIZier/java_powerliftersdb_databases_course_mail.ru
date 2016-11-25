@@ -2,16 +2,21 @@ version: "2"
 
 services:
 
+  tomcat:
+    image: glaizier/powerlifters
+    depends_on:
+      - postgres
+    # entrypoint overrides cmd in Dockerfile https://github.com/docker/compose/issues/3140
+    # https://github.com/docker/compose/pull/3764 https://github.com/docker/docker/pull/25012
+    # entrypoint: /bin/wait-for-it.sh postgres:5432 -- /usr/local/tomcat/bin/catalina.sh run
+    command: ["/bin/wait-for-it.sh", "postgres:5432", "--", "/usr/local/tomcat/bin/catalina.sh", "run"]
+    ports:
+      - "8888:8080"
+    tty: true
+
   postgres:
     image: postgres:9.6
     ports:
       - "5432:5432"
     volumes:
       - ./init:/docker-entrypoint-initdb.d
-
-  tomcat:
-    image: glaizier/powerlifters
-    depends_on:
-      - postgres
-    ports:
-      - "8888:8080"

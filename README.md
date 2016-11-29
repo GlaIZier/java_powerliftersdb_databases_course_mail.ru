@@ -81,3 +81,6 @@ and go to
 ```
 http://localhost:8080/powerliftersdb
 ```
+
+### LICENSE
+GNU GPLv3

@@ -73,7 +73,7 @@ But you still need initialized postgres service as external dependency.
     ```
 
 #### Run inside docker
-To run inside docker container use command:
+To run inside docker container use command from docker/ directory:
 ```
 make run
 ```
